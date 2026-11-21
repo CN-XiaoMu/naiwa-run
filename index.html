@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123847">
+<title>奶蛙快跑</title>
+
+<style>
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; background: #092533; }
+body { color: #fff8e6; font: 16px system-ui, sans-serif; }
+#canvas { display: block; outline: 0; touch-action: none; }
+#loading { position: fixed; inset: 0; display: grid; place-content: center; text-align: center; }
+#loading[hidden] { display: none; }
+h1 { margin: 0 0 12px; font-size: clamp(30px, 8vw, 62px); }
+progress { width: min(70vw, 280px); margin: 16px auto; accent-color: #87ebbe; }
+#status { max-width: min(80vw, 420px); }
+#orientation { display: none; }
+@media (orientation: landscape) and (pointer: coarse) {
+  #orientation { display: block; position: fixed; left: max(10px, env(safe-area-inset-left)); bottom: max(10px, env(safe-area-inset-bottom)); margin: 0; color: #bddbd4; font-size: 12px; pointer-events: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="canvas" tabindex="0">请使用支持 WebGL 2 的浏览器。</canvas>
+<section id="loading" aria-live="polite">
+<h1>奶蛙快跑</h1>
+<div id="status">正在加载港湾轨道</div>
+<progress id="progress" max="1"></progress>
+</section>
+<p id="orientation">竖屏游玩更方便</p>
+<script src="index.js"></script>
+<script>
+const engine = new Engine({"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":70934052,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4});
+const loading = document.getElementById('loading');
+const progressBar = document.getElementById('progress');
+engine.startGame({
+  onProgress(current, total) {
+    if (total > 0) progressBar.value = Math.min(1, current / total);
+  }
+}).then(() => {
+  loading.hidden = true;
+}).catch(error => {
+  document.getElementById('status').textContent = '加载失败：' + error.message;
+  progressBar.hidden = true;
+  console.error(error);
+});
+</script>
+</body>
+</html>
+
